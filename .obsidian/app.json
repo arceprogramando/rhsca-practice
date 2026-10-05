@@ -1,0 +1,10 @@
+{
+  "alwaysUpdateLinks": true,
+  "newFileLocation": "folder",
+  "newFileFolderPath": "inbox",
+  "attachmentFolderPath": "adjuntos",
+  "readableLineLength": true,
+  "strictLineBreaks": false,
+  "showInlineTitle": true,
+  "propertiesInDocument": "visible"
+}

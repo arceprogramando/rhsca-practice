@@ -1,0 +1,8 @@
+# Fragmento para /etc/hosts — lab server1 + server2
+# Copiar o fusionar: sudo tee -a /etc/hosts < configs/hosts.lab
+
+127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+
+192.168.122.10   server1 server1.lab.example.com
+192.168.122.11   server2 server2.lab.example.com

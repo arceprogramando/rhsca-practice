@@ -1,0 +1,6 @@
+{
+  "format": "YYYY/YYYY-MM-DD",
+  "folder": "diario",
+  "template": "plantillas/diario",
+  "autorun": false
+}

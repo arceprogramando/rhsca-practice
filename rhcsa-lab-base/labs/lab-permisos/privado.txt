@@ -1,0 +1,2 @@
+secreto
+-rw-------. 1 felipe felipe 8 sep 10 21:45 privado.txt

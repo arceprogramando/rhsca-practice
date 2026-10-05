@@ -1,0 +1,10 @@
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/cache
+*.vdi
+.vagrant/

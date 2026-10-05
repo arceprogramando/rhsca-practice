@@ -1,0 +1,63 @@
+{
+  "collapse-filter": false,
+  "search": "-path:diario/ -path:plantillas/ -file:_indice",
+  "showTags": false,
+  "showAttachments": false,
+  "hideUnresolved": true,
+  "showOrphans": false,
+  "collapse-color-groups": false,
+  "colorGroups": [
+    {
+      "query": "path:tableros/",
+      "color": {
+        "a": 1,
+        "rgb": 15844367
+      }
+    },
+    {
+      "query": "path:diario/",
+      "color": {
+        "a": 1,
+        "rgb": 8357005
+      }
+    },
+    {
+      "query": "path:temas/",
+      "color": {
+        "a": 1,
+        "rgb": 1751612
+      }
+    },
+    {
+      "query": "path:rhcsa-lab-base/cheatsheets/",
+      "color": {
+        "a": 1,
+        "rgb": 10181046
+      }
+    },
+    {
+      "query": "path:rhcsa-lab-base/labs/",
+      "color": {
+        "a": 1,
+        "rgb": 4886745
+      }
+    },
+    {
+      "query": "path:plantillas/",
+      "color": {
+        "a": 1,
+        "rgb": 9807270
+      }
+    }
+  ],
+  "collapse-display": false,
+  "showArrow": true,
+  "textFadeMultiplier": 0.5,
+  "nodeSizeMultiplier": 0.8,
+  "lineSizeMultiplier": 1,
+  "collapse-forces": false,
+  "centerStrength": 0.35,
+  "repelStrength": 10,
+  "linkStrength": 1,
+  "linkDistance": 250
+}

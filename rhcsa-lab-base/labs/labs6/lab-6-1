@@ -1,0 +1,5 @@
+# Set up a shared group environment that meets the following requirements:
+
+# - Create two groups: sales and account.
+# - Create users joana, john, laura , and beatrix. Make sure they have their primary group that has the name of user
+

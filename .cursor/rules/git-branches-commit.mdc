@@ -1,0 +1,16 @@
+---
+description: Convenciones de ramas y commits de rhsca-practice. Siempre aplicar.
+alwaysApply: true
+---
+
+# Git: ramas y commits
+
+Antes de crear o sugerir una rama, un commit, un push o un PR, seguir `.cursor/skills/git-branches-commit/SKILL.md`.
+
+- Rama: `tipo/descripcion-corta-en-minusculas`. Prefijo `feat`, nunca `feature`. Entregar como `git checkout -b ...`.
+- Si el usuario no dio ticket, preguntar: ¿Tenés algún ticket? (ej. RRHH-498)
+- Con ticket: rama `feat/RRHH-498-descripcion` y cuerpo `-m "Ticket: RRHH-498."`
+- Commit: `tipo: descripción en minúsculas`. Asunto ≤50 caracteres. Cuerpo con `-m` adicionales ≤120.
+- Sin paréntesis ni scope: no `feat(algo):` ni aclaraciones entre paréntesis.
+- Commit: devolver siempre el comando `git commit` para copiar. Nunca ejecutarlo. Sin `git add` salvo pedido explícito.
+- **Nunca** `Co-authored-by:` de Cursor ni de ningún agente IA. El autor es solo git `user.name` / `user.email`.
