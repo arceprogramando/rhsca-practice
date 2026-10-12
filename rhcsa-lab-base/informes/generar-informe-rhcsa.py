@@ -5,19 +5,18 @@ from datetime import date
 from pathlib import Path
 
 PDF_OUT = Path("/home/felipe/Informe-Progreso-RHCSA-Felipe.pdf")
-HTML_OUT = Path("/home/felipe/Informe-RHCSA-Gerencia.html")
 
 # Calendario del plan: (fin - inicio) = total; elapsed + left = total
 PLAN_START = date(2026, 8, 18)
 PLAN_END = date(2026, 10, 30)
 # Fecha del informe (la VM a veces tiene reloj desfasado; ajustar al día real)
-REPORT_AS_OF = date(2026, 9, 15)
+REPORT_AS_OF = date(2026, 10, 12)
 BOOK_PAGE = 335
 BOOK_TOTAL = 1593
 BOOK_USEFUL = 1135
-RH104_PAGE = 43
+RH104_PAGE = 56
 RH104_TOTAL = 56
-RH199_PAGE = 10
+RH199_PAGE = 38
 RH199_TOTAL = 154
 
 
@@ -505,7 +504,7 @@ def build_pdf() -> bytes:
     for x, val, label, col in [
         (60, str(m["elapsed"]), ("Dias desde el", "comienzo del plan"), GREEN),
         (230, str(m["left"]), ("Dias a finalizar la", "Practica pre-examen"), AMBER),
-        (400, "2/3", "Cursos base", GREEN),
+        (400, "3/3", "Cursos base", GREEN),
     ]:
         o += rect(x, 505, 140, 82, *LIGHT)
         o += rect(x, 579, 140, 8, *col)
@@ -522,11 +521,11 @@ def build_pdf() -> bytes:
     o += txt(40, 488, 13, "Pipeline de estudio", True, DARK)
     steps = [
         ("RH024", ("Video", "OK"), GREEN),
-        ("RH104", ("33", "/56"), AMBER),
+        ("RH104", ("Hecho", ""), GREEN),
         ("RH124", ("Hecho", ""), GREEN),
         ("RH134", ("Hecho", ""), GREEN),
         ("Libro", ("335", "/1593"), CHART),
-        ("RH199", ("10", "/154"), AMBER),
+        ("RH199", ("38", "/154"), AMBER),
         ("EX200", ("Obj.", ""), AMBER),
         ("EX294", ("Ruta", ""), CHART),
     ]
@@ -548,12 +547,12 @@ def build_pdf() -> bytes:
     o += txt(40, 395, 13, "Resumen", True, DARK)
     for i, b in enumerate(
         [
-            "RH024 terminado; RH104 Fundamentals v9.1 en curso (43/56 · Cap. 4 · 15 sep).",
+            "RH024 y RH104 Fundamentals v9.1 terminados.",
             "RH124 y RH134 acreditados (completados previamente).",
             "Examen objetivo: RHCSA (EX200) - requerido para ruta RHCE (EX294).",
             "Libro Cap. 7 Permissions (pag 335) + lab-permisos + RH199/RH104.",
             "Fortaleza: chmod/modos; falta afianzar chown. Luego ACL, nmcli, systemd.",
-            "Mas adelante: storage/LVM, SELinux, firewall y boot.",
+            "Playlist NicoDemos en curso: video 24, Lab Q15 LVM (PV, VG y fstab).",
         ]
     ):
         o += txt(48, 378 - i * 11, 9, "- " + b, False, GRAY)
@@ -625,7 +624,7 @@ def build_pdf() -> bytes:
         50,
         103,
         8,
-        "- Rendir Matematica Universidad 14 de septiembre",
+        "- Rendir Geometria el 27 de octubre (la pase para preparar el examen)",
         False,
         DARK,
     )
@@ -689,12 +688,12 @@ def build_pdf() -> bytes:
     # RH104 (entre libro y RH199)
     o += txt(40, 548, 11, "Avance RH104 Getting Started with Linux Fundamentals (v9.1) - ROL", True, DARK)
     o += rect(40, 526, 520, 14, *BAR)
-    o += rect(40, 526, max(4, 520 * m["rh104_page"] / m["rh104_total"]), 14, *AMBER)
+    o += rect(40, 526, max(4, 520 * m["rh104_page"] / m["rh104_total"]), 14, *GREEN)
     o += txt(
         40,
         512,
         8,
-        f"{m['rh104_page']} / {m['rh104_total']} (~{m['rh104_pct']}%)  |  Cap. 4 ch04  |  15 sep 2026",
+        f"{m['rh104_page']} / {m['rh104_total']} (~{m['rh104_pct']}%)  |  terminado",
         False,
         GRAY,
     )
@@ -702,7 +701,7 @@ def build_pdf() -> bytes:
         40,
         498,
         8,
-        f"RH104: labs en GUI GNOME via VNC (no solo CLI); faltan {m['rh104_left']} unidades.",
+        "RH104 terminado. Los labs eran en GUI GNOME via VNC, no solo CLI.",
         True,
         GREEN,
     )
@@ -711,12 +710,12 @@ def build_pdf() -> bytes:
     o += txt(40, 476, 11, "Avance RH199 Rapid Track (v10.0) - ROL", True, DARK)
     o += rect(40, 454, 520, 14, *BAR)
     o += rect(40, 454, max(4, 520 * m["rh199_page"] / m["rh199_total"]), 14, *AMBER)
-    o += txt(40, 440, 8, f"{m['rh199_page']} / {m['rh199_total']} (~{m['rh199_pct']}%)  |  Cap. 2 ch02s03 Links  |  27 ago 2026", False, GRAY)
+    o += txt(40, 440, 8, f"{m['rh199_page']} / {m['rh199_total']} (~{m['rh199_pct']}%)  |  22 sep 2026", False, GRAY)
     o += txt(
         40,
         426,
         8,
-        f"RH199: Cap. 2 ch02s03 Links / enlaces simbolicos ({m['rh199_page']}/{m['rh199_total']}).",
+        f"RH199 en curso: {m['rh199_page']}/{m['rh199_total']} paginas.",
         True,
         GREEN,
     )
@@ -779,14 +778,26 @@ def build_pdf() -> bytes:
         o += txt_centered(cx, 168, 7, label, False, GRAY)
         o += txt_centered(cx, baseline_y + h + 4, 7, str(val), False, DARK)
 
-    o += txt_centered(306, 140, 10, "Ritmo RH199 Rapid Track (10 / 154)", True, DARK)
-    o += txt_centered(306, 128, 8, "Pags acumuladas del curso en ROL  |  Cap. 2 ch02s03 Links", False, GRAY)
-    rh199_h = max(8, 28 * 10 / 20)
-    rh199_x = CONTENT_L + (CONTENT_W - BAR_W) / 2
-    rh199_cx = rh199_x + BAR_W / 2
-    o += rect(rh199_x, 90, BAR_W, rh199_h, *AMBER)
-    o += txt_centered(rh199_cx, 78, 7, "27 ago", False, GRAY)
-    o += txt_centered(rh199_cx, 90 + rh199_h + 6, 8, "10", False, DARK)
+    o += txt_centered(306, 140, 10, f"Ritmo RH199 Rapid Track ({m['rh199_page']} / {m['rh199_total']})", True, DARK)
+    o += txt_centered(306, 128, 8, "Pags acumuladas del curso en ROL", False, GRAY)
+    rh199_pts = [
+        ("27 ago", 10),
+        ("18 sep", 24),
+        ("21 sep", 33),
+        ("22 sep", 38),
+    ]
+    rh199_chart_w = (len(rh199_pts) - 1) * STEP + BAR_W
+    rh199_x0 = CONTENT_L + (CONTENT_W - rh199_chart_w) / 2
+    rh199_base = 90
+    o += rect(rh199_x0, rh199_base, rh199_chart_w, 1, *BAR)
+    for i, (label, val) in enumerate(rh199_pts):
+        x = rh199_x0 + i * STEP
+        cx = x + BAR_W / 2
+        h = max(8, 28 * val / rh199_pts[-1][1])
+        col = AMBER if i == len(rh199_pts) - 1 else CHART
+        o += rect(x, rh199_base, BAR_W, h, *col)
+        o += txt_centered(cx, rh199_base - 12, 7, label, False, GRAY)
+        o += txt_centered(cx, rh199_base + h + 4, 7, str(val), False, DARK)
     pages_content.append(stream(o))
 
     # PAGE 3 - Problematicas (pagina dedicada)
@@ -819,8 +830,8 @@ def build_pdf() -> bytes:
     for i, b in enumerate(
         [
             "RH024 (video Getting Started) - COMPLETADO.",
-            "RH104 Fundamentals v9.1 EN CURSO (43/56 · Cap. 4 ch04); practica en GNOME via VNC.",
-            "Impacto: suma carga al plan (libro + RH199 + RH104) hasta el EX200.",
+            "RH104 Fundamentals v9.1 TERMINADO.",
+            "Impacto que quedo: libro + RH199 hasta el EX200.",
         ]
     ):
         o += txt(50, 646 - i * 13, 9, "- " + b, False, GRAY)
@@ -869,8 +880,8 @@ def build_pdf() -> bytes:
     y = 680
     cred_annots: list[bytes] = []
     for title, status, col, url in [
-        ("1. RH199 Rapid Track (v10.0)", "En curso - 10/154 pag · Cap. 2 ch02s03 Links (27 ago)", CHART, URL_RH199),
-        ("2. RH104 Linux Fundamentals v9.1", "En curso - 43/56 · Cap. 4 (path RHCSA; 15 sep)", AMBER, None),
+        ("1. RH199 Rapid Track (v10.0)", "En curso - 38/154 pag (22 sep)", CHART, URL_RH199),
+        ("2. RH104 Linux Fundamentals v9.1", "TERMINADO", GREEN, None),
         ("3. RH024 Getting Started (video)", "COMPLETADO (8 sep)", GREEN, None),
         ("4. RH124 Sysadmin I", "OBTENIDO - ver certificado", GREEN, URL_RH124),
         ("5. RH134 Sysadmin II", "OBTENIDO - ver certificado", GREEN, URL_RH134),
@@ -912,7 +923,7 @@ def build_pdf() -> bytes:
     for line in [
         "van Vugt, S. - Red Hat RHCSA 9 Cert Guide (Pearson; libro principal de estudio)",
         "Red Hat - RH024 Getting Started (video; completado 8 sep)",
-        "Red Hat - RH104 Getting Started with Linux Fundamentals v9.1 (43/56 · Cap. 4 en curso)",
+        "Red Hat - RH104 Getting Started with Linux Fundamentals v9.1 (terminado)",
         "Red Hat - RH124 System Administration I",
         "Red Hat - RH134 System Administration II",
         "Red Hat - RH199 RHCSA Rapid Track (v10.0)",
@@ -934,12 +945,16 @@ def build_pdf() -> bytes:
         video_y -= 14
 
     video_y -= 4
+    o += txt(40, video_y, 10, "En curso", True, DARK)
+    video_y -= 14
+    o += txt(48, video_y, 8, "- NicoDemos, video 24: Lab Q15 LVM (PV, VG y fstab)", False, LINK)
+    video_annots.append(uri_annot(48, video_y - 4, 540, video_y + 12, URL_YT_NICODEMOS))
+    video_y -= 18
     o += txt(40, video_y, 10, "Por ver (importante)", True, AMBER)
     video_y -= 14
     for label, url in [
         ("3 RHCSA Exam Tasks That Will RUIN Your Score! (YouTube)", URL_YT_RUIN),
         ("RHCSA 9/10 Exam Prep: Real EX200 Questions & Solutions (YouTube)", URL_YT_PREP),
-        ("Playlist RHCSA exam prep series - NicoDemos (YouTube)", URL_YT_NICODEMOS),
     ]:
         o += txt(48, video_y, 8, "- [pendiente] " + label, False, LINK)
         video_annots.append(uri_annot(48, video_y - 4, 540, video_y + 12, url))
@@ -1042,502 +1057,10 @@ def build_pdf() -> bytes:
     return bytes(out)
 
 
-def build_html() -> str:
-    import base64
-
-    m = plan_metrics()
-    hat_w, hat_h, hat_rgb = load_hat_rgb()
-    hat_png = encode_png_rgb(hat_w, hat_h, hat_rgb)
-    hat_b64 = base64.b64encode(hat_png).decode("ascii")
-    hat_src = f"data:image/png;base64,{hat_b64}"
-    return f"""<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="utf-8"/>
-<title>Informe RHCSA - Gerencia Técnica</title>
-<style>
-  :root {{
-    --navy: #151515;
-    --accent: #ee0000;
-    --green: #63993d;
-    --amber: #f5921b;
-    --red: #ee0000;
-    --bg: #f2f2f2;
-    --card: #ffffff;
-    --text: #1a1f2c;
-    --muted: #5c6578;
-  }}
-  * {{ box-sizing: border-box; }}
-  body {{
-    margin: 0;
-    font-family: "Segoe UI", system-ui, sans-serif;
-    color: var(--text);
-    background: var(--bg);
-    line-height: 1.45;
-  }}
-  .page {{ max-width: 1040px; margin: 0 auto; padding: 32px 28px 48px; }}
-  .hero {{
-    background: #151515; color: #fff; border-radius: 12px; padding: 36px 32px 32px;
-    margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; gap: 20px;
-    min-height: 140px;
-  }}
-  .hero-text {{ flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; }}
-  .hero-logo {{ flex-shrink: 0; line-height: 0; display: flex; align-items: center; }}
-  .hero .eyebrow {{
-    font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase;
-    opacity: 0.95; margin-bottom: 14px;
-  }}
-  .hero h1 {{ margin: 0 0 12px; font-size: 28px; font-weight: 700; color: #fff; }}
-  .hero p {{ margin: 5px 0; opacity: 0.95; font-size: 14px; color: #fff; }}
-  .kpis {{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }}
-  .kpi {{
-    background: var(--card); border-radius: 10px; padding: 16px;
-    border-top: 4px solid var(--navy); box-shadow: 0 1px 2px rgba(0,0,0,.06);
-    text-align: center;
-  }}
-  .kpi.g {{ border-top-color: var(--green); }}
-  .kpi.a {{ border-top-color: var(--amber); }}
-  .kpi .v {{ font-size: 28px; font-weight: 700; }}
-  .kpi .l {{ font-size: 12px; color: var(--muted); margin-top: 4px; line-height: 1.3; }}
-  .kpi.a .l {{
-    max-width: 11em;
-    margin-left: auto;
-    margin-right: auto;
-    font-size: 11px;
-    line-height: 1.25;
-  }}
-  .card {{
-    background: var(--card); border-radius: 10px; padding: 20px 22px;
-    margin-bottom: 16px; box-shadow: 0 1px 2px rgba(0,0,0,.06);
-  }}
-  h2 {{ margin: 0 0 12px; font-size: 18px; color: var(--navy); }}
-  h3 {{ margin: 16px 0 8px; font-size: 14px; color: var(--navy); }}
-  ul {{ margin: 0; padding-left: 18px; }}
-  li {{ margin: 6px 0; font-size: 14px; }}
-  .pipeline {{ display: flex; gap: 6px; flex-wrap: nowrap; margin-top: 12px; overflow-x: auto; }}
-  .pip {{
-    flex: 1 1 0; min-width: 0; text-align: center; padding: 8px 4px;
-    border-radius: 6px; color: #fff; font-weight: 700; font-size: 12px;
-  }}
-  .pip span {{ display: block; font-size: 10px; font-weight: 500; opacity: .95; margin-top: 4px; line-height: 1.2; }}
-  .done {{ background: var(--green); }}
-  .plan {{ background: #0066cc; }}
-  .goal {{ background: var(--amber); }}
-  .bar-wrap {{ margin: 10px 0 16px; }}
-  .bar-label {{ display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 4px; }}
-  .bar {{ height: 14px; background: #e6eaef; border-radius: 7px; overflow: hidden; }}
-  .bar > i {{ display: block; height: 100%; border-radius: 7px; }}
-  .prio {{ display: grid; gap: 10px; }}
-  .prio-row {{ display: grid; grid-template-columns: 180px 1fr 28px; align-items: center; gap: 8px; font-size: 13px; }}
-  .prio-row .track {{ height: 9px; background: #e6eaef; border-radius: 5px; overflow: hidden; }}
-  .prio-row .track > i {{ display: block; height: 100%; }}
-  .chart-block {{ text-align: center; margin-top: 20px; }}
-  .chart-block h3 {{ margin: 0 0 8px; }}
-  .chart-block p {{ margin: 0 0 12px; }}
-  .chart-block svg {{ display: block; margin: 0 auto; max-width: 100%; }}
-  table {{ width: 100%; border-collapse: collapse; font-size: 13px; }}
-  th, td {{ text-align: left; padding: 10px 8px; border-bottom: 1px solid #e6eaef; }}
-  th {{ color: var(--muted); font-weight: 600; font-size: 11px; text-transform: uppercase; }}
-  .tag {{ display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; }}
-  .tag.ok {{ background: #e5f6ec; color: var(--green); }}
-  .tag.plan {{ background: #e5f2fa; color: #0066cc; }}
-  .tag.warn {{ background: #fbf0dd; color: var(--amber); }}
-  .ask {{
-    background: #eef6fb; border-left: 4px solid #0066cc;
-    padding: 18px 20px; border-radius: 0 8px 8px 0; font-size: 14px;
-    width: 100%; max-width: none; box-sizing: border-box;
-    line-height: 1.55;
-  }}
-  .ask .subhead {{ margin: 16px 0 8px; font-weight: 700; }}
-  .ask .subhead:first-of-type {{ margin-top: 14px; }}
-  .ask ul {{ margin: 0; padding-left: 18px; }}
-  .ask ul + .subhead {{ margin-top: 16px; }}
-  .footer {{ margin-top: 28px; font-size: 11px; color: var(--muted); }}
-  a {{ color: #0066cc; }}
-  @media print {{
-    body {{ background: #fff; }}
-    .page {{ max-width: none; padding: 0; }}
-    .hero, .card, .kpi {{ box-shadow: none; }}
-    .no-print {{ display: none; }}
-  }}
-</style>
-</head>
-<body>
-  <div class="page">
-    <p class="no-print" style="font-size:13px;color:#5c6578">
-      Para PDF: navegador → <b>Imprimir → Guardar como PDF</b> (gráficos de fondo activados).
-    </p>
-
-    <div class="hero">
-      <div class="hero-text">
-        <h1>Informe de progreso - RHCSA (EX200)</h1>
-        <p><b>Candidato:</b> Felipe Antonio Aleman Arce</p>
-        <p>Aproximado Finalización Práctica: 30 oct 2026</p>
-        <p>Examen objetivo: RHCSA (EX200) - Requerido para Ruta RHCE (EX294)</p>
-        <p>Material: Red Hat RHCSA 9 Cert Guide (Sander van Vugt) + RH124/RH134</p>
-      </div>
-            <div class="hero-logo" aria-hidden="true">
-        <img src="{hat_src}" alt="Red Hat" width="72" height="48" style="display:block"/>
-      </div>
-    </div>
-
-    <div class="kpis">
-      <div class="kpi g"><div class="v">{m["elapsed"]}</div><div class="l">Días desde el comienzo del plan</div></div>
-      <div class="kpi a"><div class="v">{m["left"]}</div><div class="l">Días a finalizar la<br/>Práctica pre-examen</div></div>
-      <div class="kpi g"><div class="v">2/3</div><div class="l">Cursos base completados</div></div>
-    </div>
-
-    <div class="card">
-      <h2>Pipeline de estudio</h2>
-      <div class="pipeline">
-        <div class="pip done">RH024<span>Video·OK</span></div>
-        <div class="pip goal">RH104<span>43/56</span></div>
-        <div class="pip done">RH124<span>Hecho</span></div>
-        <div class="pip done">RH134<span>Hecho</span></div>
-        <div class="pip plan">Libro<span>335/1593</span></div>
-        <div class="pip goal">RH199<span>10/154</span></div>
-        <div class="pip goal">EX200<span>Obj.</span></div>
-        <div class="pip plan">EX294<span>Ruta</span></div>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2>Resumen</h2>
-      <ul>
-        <li><b>RH124</b> y <b>RH134</b> acreditados (completados previamente).</li>
-        <li>Examen objetivo: <b>RHCSA (EX200)</b> - requerido para ruta <b>RHCE (EX294)</b>.</li>
-        <li>Refuerzo actual: libro <b>Red Hat RHCSA 9 Cert Guide</b> (autor: Sander van Vugt) + labs diarios.</li>
-        <li><b>Cap. 7 Permissions Management</b> · Libro <b>335/1593</b> + lab <code>~/lab-permisos</code> (11 sep). Cap. 6 users completado.</li>
-        <li><b>RH199</b> Rapid Track v10.0 en curso (10/154 pág · Cap. 2 ch02s03 Links · 27 ago).</li>
-        <li><b>Path RHCSA:</b> RH024 (video) completado; <b>RH104</b> Fundamentals v9.1 en curso (<b>43/56</b> · Cap. 4 · 15 sep).</li>
-        <li>Fortaleza: shell, archivos, <b>SSH</b> y <b>chmod</b> (modos octal/simbólico). Refuerzo: <b>chown/ownership</b>, ACL, nmcli, systemd.</li>
-        <li>Más adelante: storage/LVM, SELinux, firewall y boot.</li>
-      </ul>
-    </div>
-    <div class="card" style="border-left:4px solid var(--amber)">
-      <h2>Problemáticas encontradas</h2>
-      <div class="ask" style="background:#fbf8f0;border-left-color:var(--amber)">
-        <p class="subhead" style="margin-top:0;color:var(--amber)">8 sep 2026</p>
-        <p style="margin:0 0 10px">
-          Encontré el <b>path correcto</b> para anotarme a rendir el <b>RHCSA</b> en ROL.
-          Además de <b>RH124</b> y <b>RH134</b>, el plan exige cursos previos de fundamentals:
-        </p>
-        <ul>
-          <li><b>RH024</b> (video Getting Started) — <b>completado</b>.</li>
-          <li><b>RH104</b> Getting Started with Linux Fundamentals <b>v9.1</b> — <b>en curso 43/56 · Cap. 4</b>.</li>
-          <li>Impacto: suma carga al plan (libro + RH199 + RH104) hasta el EX200.</li>
-        </ul>
-      </div>
-      <div class="ask" style="background:#fbf8f0;border-left-color:var(--amber);margin-top:14px;padding-bottom:10px">
-        <p class="subhead" style="margin-top:0;color:var(--amber)">31 ago 2026</p>
-        <p style="margin:0 0 8px">
-          Para practicar <b>Cap. 5 (SSH)</b> de la forma más real posible, monté <b>dos VMs Rocky</b> en VirtualBox
-          (servidor + cliente). Esto consumió <b>gran parte de las horas de estudio del día</b> (infraestructura en lugar de avanzar páginas del libro).
-        </p>
-        <ul style="margin-bottom:0">
-          <li>Clon inicial: mismo hostname, Machine ID y MAC; conflictos SSH (puertos 2200/2222).</li>
-          <li>Segundo disco con LVM duplicado trabó el boot en Server1-nuevo (fix: desmontar disco extra).</li>
-          <li>Red host-only: IP por DHCP (<code>192.168.56.102</code>) en vez de estática (<code>.10</code>/<code>.11</code>).</li>
-          <li><code>nmcli</code>: el nombre del perfil debe ser exacto (<i>Conexión cableada 1</i>, con acento y minúsculas).</li>
-          <li><b>Resuelto:</b> lab 2 VMs (<code>servera</code> .10 + <code>workstation</code> .11); SSH, scp, sftp y claves (Ex 5-5).</li>
-        </ul>
-        <p style="font-size:12px;color:var(--muted);margin:8px 0 0">
-          Nota examen: VirtualBox/clonado no entra; sí puede pedirse IP estática con <code>nmcli</code> en una interfaz dada.
-        </p>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2>Perfil y contexto</h2>
-      <div class="ask">
-        Me desenvuelvo como desarrollador <b>FullStack</b>. Al no haber trabajado
-        antes en el área de sysadmin, algunos conceptos me son nuevos y otros
-        ya los uso de alguna forma en el día a día.
-        <p class="subhead">Disponibilidad</p>
-        <ul>
-          <li><b>2 hs de estudio por día</b> en el trabajo + días/horarios disponibles fuera de eso</li>
-          <li><b>Extra:</b> martes, jueves y sábado 20 a 22 hs</li>
-          <li>domingo todo el día</li>
-        </ul>
-        <p class="subhead">Días ocupados</p>
-        <ul>
-          <li><b>Lunes y miércoles:</b> 19 a 22 hs inglés en el CUI</li>
-          <li><b>Sábados:</b> universidad de 8 a 15 hs (+ 1 hs de viaje a la universidad)</li>
-        </ul>
-        <p class="subhead">Otras Obligaciones</p>
-        <ul>
-          <li>Rendir Matemática Universidad <b>14 de septiembre</b></li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2>Credenciales y horizonte (orden de plan)</h2>
-      <table>
-        <thead><tr><th>Ítem</th><th>Estado</th><th>Enlace</th></tr></thead>
-        <tbody>
-          <tr>
-            <td><b>RH199</b> Rapid Track (v10.0)</td>
-            <td><span class="tag plan">En curso · 10/154 pág · Cap. 2 ch02s03 Links (27 ago)</span></td>
-            <td><a href="{URL_RH199}" target="_blank" rel="noopener noreferrer">Curso en ROL</a></td>
-          </tr>
-          <tr>
-            <td><b>RH104</b> Linux Fundamentals v9.1</td>
-            <td><span class="tag warn">En curso · 43/56 · Cap. 4 · path RHCSA (15 sep)</span></td>
-            <td>—</td>
-          </tr>
-          <tr>
-            <td><b>RH024</b> Getting Started (video)</td>
-            <td><span class="tag ok">Completado (8 sep)</span></td>
-            <td>—</td>
-          </tr>
-          <tr>
-            <td><a href="{URL_RH124}" target="_blank" rel="noopener noreferrer"><b>RH124</b> Sysadmin I</a></td>
-            <td><span class="tag ok">Obtenido</span></td>
-            <td><a href="{URL_RH124}" target="_blank" rel="noopener noreferrer">Ver certificado</a></td>
-          </tr>
-          <tr>
-            <td><a href="{URL_RH134}" target="_blank" rel="noopener noreferrer"><b>RH134</b> Sysadmin II</a></td>
-            <td><span class="tag ok">Obtenido</span></td>
-            <td><a href="{URL_RH134}" target="_blank" rel="noopener noreferrer">Ver certificado</a></td>
-          </tr>
-          <tr>
-            <td>EX200 RHCSA</td>
-            <td><span class="tag warn">Objetivo</span></td>
-            <td><a href="{URL_EX200}" target="_blank" rel="noopener noreferrer">Página oficial del examen</a></td>
-          </tr>
-          <tr>
-            <td>EX294 RHCE</td>
-            <td><span class="tag plan">Ruta · EX200 requerido</span></td>
-            <td><a href="{URL_EX294}" target="_blank" rel="noopener noreferrer">Página oficial del examen</a></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="card">
-      <h2>Avance del plan de refuerzo</h2>
-      <div class="bar-wrap">
-        <div class="bar-label"><span>Calendario total del plan (18 ago → 30 oct)</span><span>{m["elapsed"]} transcurridos + {m["left"]} restantes = {m["total"]} (~{m["pct_cal"]}%)</span></div>
-        <div class="bar"><i style="width:{m["pct_cal"]}%;background:#0066cc"></i></div>
-      </div>
-      <div class="bar-wrap">
-        <div class="bar-label"><span>Libro Red Hat RHCSA 9 Cert Guide (Sander van Vugt)</span><span>{m["book_page"]} / {m["book_total"]} (~{m["book_pct"]}%) · Cap. 7 Permissions Management</span></div>
-        <div class="bar"><i style="width:{m["book_pct"]}%;background:#37a3a3"></i></div>
-        <p style="font-size:13px;color:#ee0000;font-weight:700;margin:8px 0 0;line-height:1.45">
-          Libro (PDF {m["book_total"]}): faltan {m["book_left"]} &nbsp;|&nbsp; 15/día → ~nov &nbsp;|&nbsp; meta 30 oct ({m["left"]} d) → ~{m["need_pdf"]}/día
-        </p>
-        <p style="font-size:13px;color:#0066cc;font-weight:700;margin:6px 0 0;line-height:1.45">
-          Libro (contenido útil ~{BOOK_USEFUL}): faltan ~{m["useful_left"]} &nbsp;|&nbsp; 15/día → ~fin oct &nbsp;|&nbsp; meta 30 oct → ~{m["need_useful"]}/día
-        </p>
-        <p style="font-size:13px;color:#63993d;font-weight:700;margin:6px 0 0;line-height:1.45">
-          Promedio hasta hoy: ~{m["avg"]} pág/día ({m["book_page"]} en {m["elapsed"]} d) &nbsp;|&nbsp; para meta: ~{m["need_pdf"]} PDF o ~{m["need_useful"]} útil
-        </p>
-      </div>
-      <div class="bar-wrap">
-        <div class="bar-label"><span>RH104 Getting Started with Linux Fundamentals (v9.1) — ROL</span><span>{m["rh104_page"]} / {m["rh104_total"]} (~{m["rh104_pct"]}%) · Cap. 4 ch04 · path RHCSA · 15 sep</span></div>
-        <div class="bar"><i style="width:{m["rh104_pct"]}%;background:#f5921b"></i></div>
-        <p style="font-size:13px;color:#63993d;font-weight:700;margin:8px 0 0;line-height:1.45">
-          RH104: labs en GUI GNOME via VNC (no solo CLI); faltan {m["rh104_left"]} unidades.
-        </p>
-      </div>
-      <div class="bar-wrap">
-        <div class="bar-label"><span>RH199 Rapid Track v10.0 (ROL)</span><span>{m["rh199_page"]} / {m["rh199_total"]} (~{m["rh199_pct"]}%) · Cap. 2 ch02s03 Links · 27 ago</span></div>
-        <div class="bar"><i style="width:{m["rh199_pct"]}%;background:#f5921b"></i></div>
-        <p style="font-size:13px;color:#63993d;font-weight:700;margin:8px 0 0;line-height:1.45">
-          RH199: Cap. 2 ch02s03 Links / enlaces simbólicos ({m["rh199_page"]}/{m["rh199_total"]}).
-        </p>
-      </div>
-      <h3>Prioridad de estudio (importancia + comodidad · 1 menor · 10 mayor)</h3>
-      <p style="font-size:12px;color:var(--muted);margin:0 0 10px">Combina lo crítico para el examen con cómo nos sentimos hoy en cada tema.</p>
-      <div class="prio">
-        <div class="prio-row"><span>Reset root / rd.break</span><div class="track"><i style="width:100%;background:#ee0000"></i></div><span>10</span></div>
-        <div class="prio-row"><span>Persistencia al reboot</span><div class="track"><i style="width:100%;background:#ee0000"></i></div><span>10</span></div>
-        <div class="prio-row"><span>Storage + LVM + fstab</span><div class="track"><i style="width:100%;background:#ee0000"></i></div><span>10</span></div>
-        <div class="prio-row"><span>SELinux</span><div class="track"><i style="width:100%;background:#ee0000"></i></div><span>10</span></div>
-        <div class="prio-row"><span>Red + firewall (nmcli/nmtui)</span><div class="track"><i style="width:90%;background:#f5921b"></i></div><span>9</span></div>
-        <div class="prio-row"><span>Boot / troubleshoot</span><div class="track"><i style="width:90%;background:#f5921b"></i></div><span>9</span></div>
-        <div class="prio-row"><span>systemd + cron</span><div class="track"><i style="width:70%;background:#0066cc"></i></div><span>7</span></div>
-        <div class="prio-row"><span>DNF + Flatpak</span><div class="track"><i style="width:50%;background:#63993d"></i></div><span>5</span></div>
-        <div class="prio-row"><span>Users / grupos</span><div class="track"><i style="width:40%;background:#63993d"></i></div><span>4</span></div>
-        <div class="prio-row"><span>Permisos + ACL</span><div class="track"><i style="width:30%;background:#63993d"></i></div><span>3</span></div>
-        <div class="prio-row"><span>SSH</span><div class="track"><i style="width:30%;background:#63993d"></i></div><span>3</span></div>
-        <div class="prio-row"><span>Hard/soft links</span><div class="track"><i style="width:30%;background:#63993d"></i></div><span>3</span></div>
-        <div class="prio-row"><span>Comprimir/extraer (tar)</span><div class="track"><i style="width:20%;background:#63993d"></i></div><span>2</span></div>
-        <div class="prio-row"><span>Shell / archivos</span><div class="track"><i style="width:10%;background:#63993d"></i></div><span>1</span></div>
-      </div>
-      <p style="font-size:12px;color:var(--muted);margin:8px 0 0">
-        <b>Reset root / rd.break:</b> GRUB → rd.break → remount rw → chroot → passwd → touch /.autorelabel (fundamental en EX200).
-        <br><b>Persistencia al reboot:</b> que la config siga tras reiniciar (fstab, enable, red/firewall permanentes, etc.).
-      </p>
-
-      <div class="chart-block">
-      <h3>Ritmo libro Van Vugt (335 / 1593 pág)</h3>
-      <p style="font-size:12px;color:var(--muted)">Páginas acumuladas del PDF del libro. Actual: 335 / 1593 · Cap. 7 Permissions (chmod OK; chown en refuerzo · 11 sep).</p>
-      <svg viewBox="0 0 560 150" width="560" height="150" role="img" aria-label="Ritmo libro Van Vugt">
-        <line x1="20" y1="118" x2="540" y2="118" stroke="#c5ced9"/>
-        <rect x="20" y="91" width="16" height="27" fill="#0066cc"/>
-        <text x="28" y="136" font-size="5" fill="#5c6578" text-anchor="middle">18</text>
-        <text x="28" y="85" font-size="7" fill="#151515" text-anchor="middle">80</text>
-        <rect x="68" y="76" width="16" height="42" fill="#0066cc"/>
-        <text x="76" y="136" font-size="5" fill="#5c6578" text-anchor="middle">19</text>
-        <text x="76" y="70" font-size="7" fill="#151515" text-anchor="middle">125</text>
-        <rect x="116" y="65" width="16" height="53" fill="#0066cc"/>
-        <text x="124" y="136" font-size="5" fill="#5c6578" text-anchor="middle">21</text>
-        <text x="124" y="59" font-size="7" fill="#151515" text-anchor="middle">160</text>
-        <rect x="164" y="53" width="16" height="65" fill="#0066cc"/>
-        <text x="172" y="136" font-size="5" fill="#5c6578" text-anchor="middle">25</text>
-        <text x="172" y="47" font-size="7" fill="#151515" text-anchor="middle">196</text>
-        <rect x="212" y="47" width="16" height="71" fill="#0066cc"/>
-        <text x="220" y="136" font-size="5" fill="#5c6578" text-anchor="middle">26</text>
-        <text x="220" y="41" font-size="7" fill="#151515" text-anchor="middle">214</text>
-        <rect x="260" y="40" width="16" height="78" fill="#0066cc"/>
-        <text x="268" y="136" font-size="5" fill="#5c6578" text-anchor="middle">27</text>
-        <text x="268" y="34" font-size="7" fill="#151515" text-anchor="middle">234</text>
-        <rect x="308" y="35" width="16" height="83" fill="#0066cc"/>
-        <text x="316" y="136" font-size="5" fill="#5c6578" text-anchor="middle">28</text>
-        <text x="316" y="29" font-size="7" fill="#151515" text-anchor="middle">251</text>
-        <rect x="356" y="28" width="16" height="89" fill="#0066cc"/>
-        <text x="364" y="136" font-size="5" fill="#5c6578" text-anchor="middle">30</text>
-        <text x="364" y="22" font-size="7" fill="#151515" text-anchor="middle">270</text>
-        <rect x="404" y="27" width="16" height="90" fill="#0066cc"/>
-        <text x="412" y="136" font-size="5" fill="#5c6578" text-anchor="middle">31</text>
-        <text x="412" y="21" font-size="7" fill="#151515" text-anchor="middle">272</text>
-        <rect x="452" y="35" width="16" height="83" fill="#0066cc"/>
-        <text x="460" y="136" font-size="5" fill="#5c6578" text-anchor="middle">1 sep</text>
-        <text x="460" y="35" font-size="7" fill="#151515" text-anchor="middle">298</text>
-
-        <rect x="500" y="32" width="16" height="86" fill="#0066cc"/>
-        <text x="508" y="136" font-size="5" fill="#5c6578" text-anchor="middle">2 sep</text>
-        <text x="508" y="32" font-size="7" fill="#151515" text-anchor="middle">309</text>
-
-        <rect x="548" y="29" width="16" height="89" fill="#0066cc"/>
-        <text x="556" y="136" font-size="5" fill="#5c6578" text-anchor="middle">3 sep</text>
-        <text x="556" y="29" font-size="7" fill="#151515" text-anchor="middle">321</text>
-
-        <rect x="596" y="28" width="16" height="90" fill="#63993d"/>
-        <text x="604" y="136" font-size="5" fill="#5c6578" text-anchor="middle">4 sep</text>
-        <text x="604" y="28" font-size="7" fill="#151515" text-anchor="middle">335</text>
-      </svg>
-      </div>
-
-      <div class="chart-block" style="margin-top:32px">
-      <h3>Ritmo RH199 Rapid Track (10 / 154 pág)</h3>
-      <p style="font-size:12px;color:var(--muted)">Páginas acumuladas del curso en ROL. Actual: 10 / 154 · Cap. 2 ch02s03 Links · 27 ago.</p>
-      <svg viewBox="0 0 120 110" width="120" height="110" role="img" aria-label="Ritmo RH199 Rapid Track">
-        <line x1="10" y1="78" x2="110" y2="78" stroke="#c5ced9"/>
-        <rect x="46" y="58" width="28" height="20" fill="#f5921b"/>
-        <text x="60" y="96" font-size="9" fill="#5c6578" text-anchor="middle">27 ago</text>
-        <text x="60" y="52" font-size="10" fill="#151515" text-anchor="middle">10</text>
-      </svg>
-      </div>
-    </div>
-
-    <div class="card" style="margin-bottom:28px">
-      <h2>Fases de estudio (RHCSA 10 / EX200)</h2>
-      <table>
-        <thead><tr><th>Fase</th><th>Hasta</th><th>Foco</th></tr></thead>
-        <tbody>
-          <tr><td>Hecho</td><td>4 sep</td><td>Cap. 1-6: install, tools, files, SSH, users/groups</td></tr>
-          <tr><td>Ahora</td><td>15 sep</td><td>Cap. 7: chmod OK; afianzar chown/ownership + ACL (pág 335)</td></tr>
-          <tr><td>Bloque B</td><td>sep</td><td>Red nmcli (Cap. 8) — SSH ya hecho</td></tr>
-          <tr><td>Bloque C</td><td>sep</td><td>DNF + Flatpak + systemd/cron</td></tr>
-          <tr><td>Crítico</td><td>fin sep</td><td>Storage LVM/fstab (+ NFS/autofs)</td></tr>
-          <tr><td>Seguridad</td><td>ini oct</td><td>SELinux + firewall + boot</td></tr>
-          <tr><td>Cierre</td><td>~30 oct</td><td>Repaso / practice exams (EX200 RHEL 10)</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="card">
-      <h2>Plan de estudio</h2>
-      <div class="ask">
-        <ol style="margin:0;padding-left:18px">
-          <li>Continuar labs en Rocky 10 según las fases anteriores.</li>
-          <li><b>RH199</b> Rapid Track en curso (10/154 pág · Cap. 2 ch02s03 Links · 27 ago); EX200 como objetivo.</li>
-          <li>Hito actual: <b>Cap. 7</b> pág 335 · chmod más sólido; pendiente afianzar <b>chown</b>/ownership + ACL · lab-permisos (11 sep).</li>
-        </ol>
-      </div>
-    </div>
-
-    <div class="card" style="margin-bottom:12px">
-      <h2>Bibliografía y enlaces</h2>
-      <h3 style="margin-top:0">Bibliografía</h3>
-      <ul>
-        <li>van Vugt, Sander — <b>Red Hat RHCSA 9 Cert Guide</b> (Pearson; libro principal de estudio).</li>
-        <li>Red Hat — <b>RH124</b> System Administration I</li>
-        <li>Red Hat — <b>RH134</b> System Administration II</li>
-        <li>Red Hat — <b>RH199</b> RHCSA Rapid Track (v10.0)</li>
-      </ul>
-      <h3>Vistos</h3>
-      <ul>
-        <li>
-          <a href="{URL_YT_TIPS}" target="_blank" rel="noopener noreferrer">
-            How I Scored 290/290 on the RHCSA Exam – 8 Tips You Need to Know!
-          </a>
-        </li>
-        <li>
-          <a href="{URL_YT_INSIDE}" target="_blank" rel="noopener noreferrer">
-            Inside a Red Hat Certification Exam: What you need to know
-          </a>
-        </li>
-      </ul>
-      <h3 style="color:var(--amber)">Por ver (importante)</h3>
-      <ul>
-        <li>
-          <span class="tag warn" style="margin-right:6px">pendiente</span>
-          <a href="{URL_YT_RUIN}" target="_blank" rel="noopener noreferrer">
-            3 RHCSA Exam Tasks That Will RUIN Your Score!
-          </a>
-        </li>
-        <li>
-          <span class="tag warn" style="margin-right:6px">pendiente</span>
-          <a href="{URL_YT_PREP}" target="_blank" rel="noopener noreferrer">
-            RHCSA 9/10 Exam Prep: Real EX200 Questions &amp; Step-by-Step Solutions
-          </a>
-        </li>
-        <li>
-          <span class="tag warn" style="margin-right:6px">pendiente</span>
-          <a href="{URL_YT_NICODEMOS}" target="_blank" rel="noopener noreferrer">
-            Playlist RHCSA exam prep series — NicoDemos
-          </a>
-        </li>
-      </ul>
-      <h3 style="margin-top:20px">Enlaces (hipervínculos)</h3>
-      <ul>
-        <li><a href="{URL_RH124}" target="_blank" rel="noopener noreferrer">RH124 — badge Credly</a></li>
-        <li><a href="{URL_RH134}" target="_blank" rel="noopener noreferrer">RH134 — badge Credly</a></li>
-        <li><a href="{URL_RH199}" target="_blank" rel="noopener noreferrer">RH199 — Rapid Track v10.0 (ROL)</a></li>
-        <li><a href="{URL_EX200}" target="_blank" rel="noopener noreferrer">EX200 — examen RHCSA oficial</a></li>
-        <li><a href="{URL_EX294}" target="_blank" rel="noopener noreferrer">EX294 — examen RHCE (ruta posterior)</a></li>
-      </ul>
-    </div>
-
-    <p class="footer">
-      Generado {REPORT_AS_OF.strftime('%d/%m/%Y')} · Seguimiento preparación RHCSA · Plan de estudio
-    </p>
-  </div>
-</body>
-</html>
-"""
-
 
 def main() -> None:
     PDF_OUT.write_bytes(build_pdf())
-    HTML_OUT.write_text(build_html(), encoding="utf-8")
     print(f"OK PDF:  {PDF_OUT} ({PDF_OUT.stat().st_size} bytes)")
-    print(f"OK HTML: {HTML_OUT} ({HTML_OUT.stat().st_size} bytes)")
-    try:
-        import importlib.util
-
-        docx_path = Path(__file__).with_name("generar-informe-rhcsa-docx.py")
-        spec = importlib.util.spec_from_file_location("rhcsa_docx", docx_path)
-        if spec and spec.loader:
-            mod = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(mod)
-            mod.main()
-    except Exception as e:
-        print(f"WARN DOCX: {e}")
 
 
 if __name__ == "__main__":

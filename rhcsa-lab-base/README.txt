@@ -76,7 +76,7 @@ pdfs-curso/
 
 informes/
   Informe-Progreso-RHCSA-Felipe.pdf
-  generar-informe-rhcsa.py / generar-informe-rhcsa-docx.py
+  generar-informe-rhcsa.py
   GUIA-agente-descarga-informe.md
 
 scripts-practica/
