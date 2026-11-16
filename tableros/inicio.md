@@ -23,6 +23,7 @@ Mapa del vault RHCSA. Cada nota es un nodo. Los `[[wikilinks]]` son las aristas 
 - [[rhcsa-lab-base/cheatsheets/ex200-objetivos-oficiales|Objetivos EX200]]
 - [[rhcsa-lab-base/cheatsheets/rhcsa-comandos-principales|Cheat sheet]]
 - [[rhcsa-lab-base/cheatsheets/rh199-indice-curso|Índice RH199]]
+- [[posibles-errores-examen|Posibles errores (nmtui 0%, etc.)]]
 - [[rhcsa-lab-base/rhcsa-lab/README|Lab server1 + server2]]
 - [[rhcsa-lab-base/labs/rhcsa_lab-nbaud/README|Lab nbaud (Vagrant + gaps)]]
 - [[inbox|Inbox]]

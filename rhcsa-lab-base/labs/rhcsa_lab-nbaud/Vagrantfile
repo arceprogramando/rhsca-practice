@@ -7,12 +7,17 @@ Vagrant.configure("2") do |config|
   config.vm.box = "rockylinux/10"
   config.vm.box_url = "https://dl.rockylinux.org/pub/rocky/10/images/x86_64/Rocky-10-Vagrant-Vbox.latest.x86_64.vagrant.virtualbox.box"
   config.vm.synced_folder '.', '/vagrant', disabled: true
+  # Hostname and enp0s8 start unfinished on purpose: the Q01 labs ask you to set
+  # client.rhcsa.lab / server.rhcsa.lab and 172.16.1.12 / 172.16.1.13 yourself.
+  # SSH still works over the NAT interface (enp0s3). auto_config: false only
+  # leaves the host-only NIC without an address.
   {
     "server" => {
-      ip:    "172.16.1.13",
-      mem:   2048,
-      cpus:  2,
-      pkgs:  "httpd firewalld policycoreutils-python-utils",
+      ip:       "172.16.1.13",
+      hostname: "node-b.lab",
+      mem:      2048,
+      cpus:     2,
+      pkgs:     "httpd firewalld policycoreutils-python-utils",
       setup: <<-SHELL
         systemctl enable --now httpd firewalld
         firewall-cmd --permanent --add-service=http
@@ -22,10 +27,11 @@ Vagrant.configure("2") do |config|
       SHELL
     },
     "client" => {
-      ip:    "172.16.1.12",
-      mem:   1024,
-      cpus:  1,
-      pkgs:  "curl lynx firewalld",
+      ip:       "172.16.1.12",
+      hostname: "node-a.lab",
+      mem:      1024,
+      cpus:     1,
+      pkgs:     "curl lynx firewalld",
       setup: <<-SHELL
         systemctl enable --now firewalld
         firewall-cmd --permanent --add-service=ssh
@@ -34,11 +40,19 @@ Vagrant.configure("2") do |config|
     }
   }.each do |name, opts|
     config.vm.define name do |vm|
-      vm.vm.hostname = "#{name}.rhcsa.lab"
+      vm.vm.hostname = opts[:hostname]
       vm.vm.network  "private_network",
         ip: opts[:ip],
         netmask: "255.255.255.0",
+        auto_config: false,
         virtualbox__hostonly: "vboxnet3"
+
+      # The box disk is already 10 GB and fully partitioned. Flatpak keeps
+      # 500 MB free, so Firefox does not fit. 12 GB adds 2 GB; the VMDK only
+      # uses that extra space when the guest writes it.
+      if name == "client"
+        vm.vm.disk :disk, primary: true, size: "12GB"
+      end
 
       vm.vm.provider "virtualbox" do |vb|
         vb.memory = opts[:mem]
@@ -60,8 +74,36 @@ Vagrant.configure("2") do |config|
         dnf -qy install openssh-server
         systemctl enable --now sshd
 
-        dnf -qy install #{opts[:pkgs]}
+        # Root SSH starts denied on purpose. The practice UI ssh-key lab
+        # asks you to allow it with vim (exam-style). First match wins in
+        # sshd_config Include order, so this drop-in must be edited (or removed).
+        cat > /etc/ssh/sshd_config.d/00-rhcsa-lab-root.conf <<'EOF'
+# Lab: starts as no. Change to yes when the ssh-key lab asks for it.
+PermitRootLogin no
+EOF
+        systemctl reload sshd
+
+        dnf -qy install #{opts[:pkgs]}#{name == "client" ? " cloud-utils-growpart" : ""}
         #{opts[:setup]}
+#{name == "client" ? <<-'GROW' : ""}
+        # No-op when the virtual disk was not grown. growpart exits 1 if nothing changed.
+        growpart /dev/sda 4 || true
+        fstype=$(findmnt -n -o FSTYPE /)
+        if [ "$fstype" = xfs ]; then
+          xfs_growfs /
+        else
+          resize2fs /dev/sda4 || true
+        fi
+GROW
+
+        # NetworkManager names unnamed ethernet "Wired connection 1/2".
+        # Match each profile to its device so the lab uses enp0s3 and enp0s8.
+        for dev in enp0s3 enp0s8; do
+          name=\$(nmcli -t -f NAME,DEVICE connection show | awk -F: -v d="\$dev" '\$2==d {print \$1; exit}')
+          if [ -n "\$name" ] && [ "\$name" != "\$dev" ]; then
+            nmcli connection modify "\$name" connection.id "\$dev"
+          fi
+        done
       SHELL
     end
   end

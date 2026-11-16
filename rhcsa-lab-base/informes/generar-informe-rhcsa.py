@@ -607,7 +607,7 @@ def build_pdf() -> bytes:
         50,
         151,
         8,
-        "- Lunes y miercoles: 19 a 22 hs ingles CUI",
+        "- Lunes y miercoles: 19 a 22 hs ingles, CUI (Centro Universitario de Idiomas)",
         False,
         DARK,
     )
@@ -623,6 +623,22 @@ def build_pdf() -> bytes:
     o += txt(
         50,
         103,
+        8,
+        "- Ingles CUI escrito: del sabado 10 al miercoles 14 de octubre",
+        False,
+        DARK,
+    )
+    o += txt(
+        50,
+        89,
+        8,
+        "- Ingles CUI oral (Centro Universitario de Idiomas): miercoles 14 de octubre",
+        False,
+        DARK,
+    )
+    o += txt(
+        50,
+        75,
         8,
         "- Rendir Geometria el 27 de octubre (la pase para preparar el examen)",
         False,
